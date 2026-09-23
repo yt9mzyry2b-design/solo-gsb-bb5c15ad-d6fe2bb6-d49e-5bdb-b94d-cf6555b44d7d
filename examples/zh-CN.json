@@ -1,0 +1,16 @@
+{
+  "app": {
+    "title": "LocaleContract",
+    "greeting": "欢迎回来,{name}!",
+    "unread": "你有 {count} 条未读{count, plural, other{消息}}。",
+    "lastLogin": "上次登录:{date, date, short} {time, time}",
+    "inbox": {
+      "summary": "{gender, select, other {{count, plural, =0{没有邮件} other{有 # 封邮件}}}}"
+    },
+    "rank": "第 {n} 名"
+  },
+  "errors": {
+    "fileSize": "文件 {name} 为 {size, number} 字节,最大为 {max, number} 字节。",
+    "retry": "请求失败。{attempts, plural, one{重试(第 # 次)} other{重试(第 # 次)}}"
+  }
+}

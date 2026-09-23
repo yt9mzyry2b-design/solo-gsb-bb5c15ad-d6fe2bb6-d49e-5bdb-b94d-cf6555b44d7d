@@ -1,0 +1,13 @@
+node_modules/
+data/
+*.db
+*.db-wal
+*.db-shm
+npm-debug.log*
+.DS_Store
+.git/
+.gitignore
+Dockerfile
+docker-compose.yml
+README.md
+test/

@@ -1,0 +1,30 @@
+{
+  "name": "locale-contract",
+  "version": "1.0.0",
+  "description": "Web tool to review ICU MessageFormat multilingual message catalogs",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test test/"
+  },
+  "keywords": [
+    "icu",
+    "messageformat",
+    "i18n",
+    "l10n",
+    "localization",
+    "sqlite"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@formatjs/icu-messageformat-parser": "^2.11.2",
+    "better-sqlite3": "^11.10.0",
+    "express": "^4.21.2",
+    "intl-messageformat": "^10.7.16"
+  }
+}

@@ -1,0 +1,25 @@
+services:
+  localecontract:
+    build: .
+    image: localecontract:latest
+    container_name: localecontract
+    ports:
+      - "3000:3000"
+    environment:
+      # Host port mapping is above; internal listen settings:
+      PORT: "3000"
+      HOST: "0.0.0.0"
+      # SQLite database + WAL files live here:
+      LC_DATA_DIR: "/data"
+    volumes:
+      - localecontract-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/api/projects',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  localecontract-data:
