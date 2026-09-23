@@ -1,0 +1,12 @@
+{
+  "app": {
+    "title": "LocaleContract 演示",
+    "greeting": "你好 {name}！",
+    "unread": "{count, plural, one {你有 {count} 条新消息} other {你有 {count} 条新消息}}。",
+    "login": "{gender, select, male {他于} female {她于} other {TA 于}} {time, time, short} 登录",
+    "rank": "你在队列中排第 {n} 位",
+    "price": "合计：{amount, number}",
+    "note": "请在 {date, date, medium} 前查看条款",
+    "footer": "由 LocaleContract 提供支持"
+  }
+}

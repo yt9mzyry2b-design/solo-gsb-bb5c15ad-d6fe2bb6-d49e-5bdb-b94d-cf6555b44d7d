@@ -1,0 +1,11 @@
+{
+  "app": {
+    "title": "LocaleContract Demo",
+    "greeting": "Hello {name}!",
+    "unread": "{count, plural, =0 {You have no messages} one {You have # new message} other {You have # new messages}}.",
+    "login": "{gender, select, male {He logged in} female {She logged in} other {They logged in}} at {time, time, short}",
+    "rank": "You are {n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} in the queue",
+    "price": "Total: {amount, number, ::currency/USD}",
+    "note": "Please <link>review the terms</link> before {date, date, medium}"
+  }
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LocaleContract — ICU 消息目录审查</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📜</text></svg>" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">📜</span>
+      <div>
+        <h1>LocaleContract</h1>
+        <span class="subtitle">ICU MessageFormat 多语言消息目录审查</span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button id="btn-sample" class="btn btn-ghost" title="加载内置示例项目（含多种缺陷）">加载示例</button>
+      <button id="btn-new-project" class="btn btn-primary">＋ 新建项目</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- 侧边栏：项目列表 -->
+    <aside class="sidebar">
+      <h2>项目</h2>
+      <div id="project-list" class="project-list"></div>
+    </aside>
+
+    <main class="content">
+      <!-- 空状态 -->
+      <section id="empty-state" class="empty-state">
+        <div class="empty-card">
+          <div class="empty-icon">🗂️</div>
+          <h2>开始审查你的多语言消息目录</h2>
+          <p>粘贴或上传各语言的 ICU MessageFormat JSON，系统将对比占位符、分支类别与嵌套结构。</p>
+          <div class="empty-actions">
+            <button class="btn btn-primary" id="btn-sample-2">加载内置示例</button>
+            <button class="btn btn-ghost" id="btn-new-project-2">新建空项目</button>
+          </div>
+          <pre class="empty-snippet">{
+  "unread": "{count, plural, one {# new message} other {# new messages}}",
+  "login":  "{gender, select, male {He…} female {She…} other {They…}}"
+}</pre>
+        </div>
+      </section>
+
+      <!-- 项目工作区 -->
+      <section id="workspace" class="workspace hidden">
+        <div class="ws-head">
+          <div>
+            <h2 id="project-name"></h2>
+            <div class="project-meta">
+              <span id="meta-locales" class="chip"></span>
+              <span id="meta-keys" class="chip"></span>
+              <label class="chip chip-select">
+                基准语言
+                <select id="base-locale"></select>
+              </label>
+            </div>
+          </div>
+          <div class="ws-actions">
+            <button id="btn-add-locale" class="btn btn-primary">＋ 添加语言</button>
+            <a id="btn-export-json" class="btn btn-ghost" href="#">导出 JSON</a>
+            <a id="btn-export-csv" class="btn btn-ghost" href="#">导出 CSV</a>
+            <button id="btn-delete-project" class="btn btn-danger-ghost" title="删除项目">删除</button>
+          </div>
+        </div>
+
+        <!-- 概览统计 -->
+        <div id="summary" class="summary">
+          <div class="stat stat-error"><span class="stat-num" id="stat-error">0</span><span class="stat-label">错误</span></div>
+          <div class="stat stat-warning"><span class="stat-num" id="stat-warning">0</span><span class="stat-label">警告</span></div>
+          <div class="stat stat-ok"><span class="stat-num" id="stat-locale-count">0</span><span class="stat-label">语言</span></div>
+          <div class="stat stat-ok"><span class="stat-num" id="stat-key-count">0</span><span class="stat-label">消息键</span></div>
+        </div>
+
+        <div class="panels">
+          <!-- 左：语言管理 + 消息表格 -->
+          <div class="panel panel-left">
+            <div class="tabs">
+              <button class="tab active" data-tab="messages">消息键 <span id="tab-keys-n" class="tab-n"></span></button>
+              <button class="tab" data-tab="locales">语言目录 <span id="tab-locales-n" class="tab-n"></span></button>
+            </div>
+
+            <div id="tab-messages" class="tab-panel">
+              <input id="key-filter" class="input" type="text" placeholder="过滤消息键…" />
+              <div id="message-list" class="message-list"></div>
+            </div>
+
+            <div id="tab-locales" class="tab-panel hidden">
+              <div id="locale-cards" class="locale-cards"></div>
+            </div>
+          </div>
+
+          <!-- 右：问题清单 -->
+          <div class="panel panel-right">
+            <div class="findings-head">
+              <h3>审查问题</h3>
+              <div class="findings-filters">
+                <select id="filter-severity" class="input input-sm">
+                  <option value="">全部级别</option>
+                  <option value="error">错误</option>
+                  <option value="warning">警告</option>
+                  <option value="info">提示</option>
+                </select>
+                <select id="filter-locale" class="input input-sm">
+                  <option value="">全部语言</option>
+                </select>
+                <input id="filter-search" class="input input-sm" type="text" placeholder="搜索键 / 描述…" />
+            </div>
+            </div>
+            <div id="findings-list" class="findings-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 添加语言弹窗 -->
+  <div id="modal-locale" class="modal hidden">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card modal-lg">
+      <div class="modal-head">
+        <h3>添加 / 替换语言目录</h3>
+        <button class="modal-x" data-close>✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="field">
+          <span>语言代码</span>
+          <input id="locale-code" class="input" type="text" placeholder="例如 en、zh-CN、ja、pt-BR" list="locale-suggestions" />
+          <datalist id="locale-suggestions">
+            <option value="en"></option><option value="en-GB"></option><option value="zh-CN"></option>
+            <option value="zh-TW"></option><option value="ja"></option><option value="ko"></option>
+            <option value="fr"></option><option value="de"></option><option value="es"></option>
+            <option value="pt-BR"></option><option value="ru"></option><option value="ar"></option>
+          </datalist>
+        </label>
+
+        <div class="seg">
+          <button type="button" class="seg-btn active" data-mode="paste">粘贴 JSON</button>
+          <button type="button" class="seg-btn" data-mode="upload">上传文件（可多选）</button>
+        </div>
+
+        <div id="mode-paste">
+          <textarea id="locale-content" class="textarea mono" placeholder='{ "app.title": "…", "unread": "{count, plural, …}" }'></textarea>
+        </div>
+        <div id="mode-upload" class="hidden">
+          <label class="dropzone" id="dropzone">
+            <input id="file-input" type="file" accept=".json,application/json" multiple hidden />
+            <div class="dz-icon">📄</div>
+            <div>点击选择或拖入多个 <code>.json</code> 文件</div>
+            <div class="dz-hint">文件名形如 <code>en.json</code>、<code>zh-CN.json</code> 时会自动识别语言代码</div>
+            <div id="file-list" class="file-list"></div>
+          </label>
+        </div>
+        <div id="ingest-error" class="form-error hidden"></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" data-close>取消</button>
+        <button id="btn-ingest" class="btn btn-primary">导入并审查</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 消息详情弹窗 -->
+  <div id="modal-message" class="modal hidden">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card modal-xl">
+      <div class="modal-head">
+        <h3 id="msg-key">key</h3>
+        <button class="modal-x" data-close>✕</button>
+      </div>
+      <div class="modal-body" id="msg-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

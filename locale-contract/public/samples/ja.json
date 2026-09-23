@@ -1,0 +1,12 @@
+{
+  "app": {
+    "title": "LocaleContract デモ",
+    "greeting": "こんにちは！",
+    "unread": "{count, plural, other {新着メッセージが # 件あります}。",
+    "login": "{gender, select, male {彼は} female {彼女は} other {ログインしました}} {time, date, short}",
+    "rank": "あなたはキューで {n, number} 番目です",
+    "price": "合計: {amount, number, ::currency/JPY}",
+    "note": "{date, date, medium} までに<link>利用規約</link>をご確認ください",
+    "legacyTip": "このキーは基準言語に存在しません"
+  }
+}
